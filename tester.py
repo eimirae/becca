@@ -1,6 +1,10 @@
+#! /usr/bin/env python
+
+
 import cProfile
 import numpy as np
 import pstats
+import argparse
 
 """
 Run a BECCA agent with a world.
@@ -23,9 +27,6 @@ Run from the command line, e.g.
 #from worlds.image_2D import World
 
 # If you want to run a world of your own, add the appropriate line here
-#from worlds.hello import World
-from becca_world_listen.listen import World
-#from becca_world_watch.watch import World
 
 from core.agent import Agent 
 
@@ -73,8 +74,39 @@ def profile():
     p.strip_dirs().sort_stats('time', 'cum').print_stats(30)
     
 if __name__ == '__main__':
-    profile_flag = False
-    if profile_flag:
-        profile()
-    else:
-        test(World(lifespan=testing_lifespan), restore=True)
+    parser = argparse.ArgumentParser(description='Run BECCA against possible worlds')
+    parser.add_argument("-w", "--world", help="choose which world to run", default="watch")
+    parser.add_argument("-t", "--test", help="Enable testing mode")
+    parser.add_argument("-p", "--profile", help="Begin Profiling mode")
+    parser.add_argument("--viz", type=int, help="Visualization period (in timesteps)", default=10**4)
+    parser.add_argument("-o", "--horizontal", type=int, help="Horizontal size (in pixels)", default=40)
+    parser.add_argument("-v", "--vertical", type=int, help="Vertical size (in pixels)", default=40)
+    parser.add_argument("--testlife", type=int, help="Testing lifespan", default=10**8)
+    parser.add_argument("--profilelife", type=int, help="Profiling lifespan", default=10**4)
+    args = parser.parse_args()
+    
+
+    if args.world == "listen":
+        from becca_world_listen.listen import World
+        if args.profile:
+            profile()
+        else:
+            test(World(lifespan=args.testlife, test=args.test,visualize_period=args.viz), restore=True)
+    elif args.world == "watch":
+        from becca_world_watch.watch import World
+        if args.profile:
+            profile()
+        else:
+            test(World(lifespan=args.testlife, test=args.test, fov_horz_span=args.horizontal, fov_vert_span=args.vertical, visualize_period=args.viz), restore=True)
+    elif args.world == "tiny_images":
+        from becca_world_tiny_images.tiny_images import World
+        if args.profile:
+            profile()
+        else:
+            test(World(lifespan=args.testlife, test=args.test, visualize_period=args.viz), restore=True)
+    elif args.world == "audio_video":
+        from becca_world_audio_video.audio_video import World
+        if args.profile:
+            profile()
+        else:
+            test(World(lifespan=args.testlife, test=args.test, fov_horz_span=args.horizontal, fov_vert_span=args.vertical, visualize_period=args.viz), restore=True)
