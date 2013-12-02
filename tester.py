@@ -27,11 +27,8 @@ Run from the command line, e.g.
 #from worlds.image_2D import World
 
 # If you want to run a world of your own, add the appropriate line here
-
 from core.agent import Agent 
 
-testing_lifespan = 10 ** 8
-profiling_lifespan = 10 ** 4
 
 def test(world, restore=False, show=True, agent_name=None):
     """ 
