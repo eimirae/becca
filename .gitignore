@@ -13,4 +13,6 @@ tester_profile
 *.blg
 *~
 build
-
+cProfile
+pstats
+myTester.py
